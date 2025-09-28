@@ -1,0 +1,64 @@
+version: '3.8'
+
+services:
+  # ROFL Oracle App
+  rofl-app:
+    build:
+      context: ./rofl-app
+      dockerfile: Dockerfile
+    container_name: price-oracle-rofl
+    environment:
+      - NODE_ENV=production
+      - LOG_LEVEL=info
+    env_file:
+      - ./rofl-app/.env
+    restart: unless-stopped
+    networks:
+      - oracle-network
+    healthcheck:
+      test: ["CMD", "node", "src/health.js"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # Frontend Web App
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: price-oracle-frontend
+    ports:
+      - "3000:80"
+    environment:
+      - NODE_ENV=production
+    env_file:
+      - ./frontend/.env
+    restart: unless-stopped
+    networks:
+      - oracle-network
+    depends_on:
+      - rofl-app
+
+  # Nginx Reverse Proxy (Optional)
+  nginx:
+    image: nginx:alpine
+    container_name: price-oracle-nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/ssl:/etc/nginx/ssl:ro
+    restart: unless-stopped
+    networks:
+      - oracle-network
+    depends_on:
+      - frontend
+
+networks:
+  oracle-network:
+    driver: bridge
+
+volumes:
+  oracle-data:
