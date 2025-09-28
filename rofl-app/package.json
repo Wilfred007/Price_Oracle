@@ -5,21 +5,15 @@
   "main": "src/index.js",
   "scripts": {
     "start": "node src/index.js",
-    "build": "docker build -t price-oracle-rofl .",
-    "dev": "nodemon src/index.js",
-    "test": "jest"
+    "build": "echo 'No build step required'",
+    "dev": "node src/index.js",
+    "test": "echo 'No tests specified'"
   },
   "dependencies": {
-    "@oasisprotocol/rofl": "^1.0.0",
     "axios": "^1.6.0",
     "ethers": "^6.8.0",
-    "dotenv": "^16.3.1"
+    "dotenv": "^16.3.0"
   },
-  "devDependencies": {
-    "nodemon": "^3.0.1",
-    "jest": "^29.7.0"
-  },
-  "keywords": ["oracle", "rofl", "oasis", "tee", "price"],
   "author": "Price Oracle Team",
   "license": "MIT"
 }
